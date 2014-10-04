@@ -25,3 +25,8 @@ Languages:
 * Java
 * VB/VBA
 * PHP, Python
+
+Recent Projects:
+* 7 channel seed counter and packet filler - Arduino and C#
+* RFID scanner for seed shipment validation - Wago, Impinj/LLRP and C#
+* ArcGIS script for tabulation of irrigation tracks to field trial plots - Python
