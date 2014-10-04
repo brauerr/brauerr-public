@@ -19,3 +19,9 @@ Currently Listening To:  Iggy Pop, The Pretty Reckless, Old Crow Medicine Show
 Last 3 trips:  Vegas, Brussels/Cologne/Aachen, Paris/Rome
 
 # *Programming Background*
+
+Languages:
+* C, C++, C#
+* Java
+* VB/VBA
+* PHP, Python
