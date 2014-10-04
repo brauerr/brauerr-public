@@ -1,6 +1,8 @@
-# *Basic Bio*
+# *Bobby Brauer*
 
-Name:  Bobby Brauer
+CS494 Data Structures, October 4, 2014
+
+# *Basic Bio*
 
 Career:  Research Station manager for a team of 7 agronomists and engineers, we conduct field performance evaluation of new seed and chemistry products, along with engineering of new software and equipment for precision ag products
 
@@ -32,3 +34,5 @@ Recent Projects:
 * 7 channel seed counter and packet filler - Arduino and C#
 * RFID scanner for seed shipment validation - Wago, Impinj/LLRP and C#
 * ArcGIS script for tabulation of irrigation tracks to field trial plots - Python
+
+# *
