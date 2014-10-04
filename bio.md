@@ -18,4 +18,6 @@ Currently Listening To:  Iggy Pop, The Pretty Reckless, Old Crow Medicine Show
 
 Last 3 trips:  Vegas, Brussels/Cologne/Aachen, Paris/Rome
 
+Additional:  On the 3 year track, more or less.  Taking 2 courses per semester when my work schedule permits.  We will see how this goes with the addition of baby.
+
 # *Programming Background*
