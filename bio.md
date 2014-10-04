@@ -21,3 +21,14 @@ Last 3 trips:  Vegas, Brussels/Cologne/Aachen, Paris/Rome
 Additional:  On the 3 year track, more or less.  Taking 2 courses per semester when my work schedule permits.  We will see how this goes with the addition of baby.
 
 # *Programming Background*
+
+Languages:
+* C, C++, C#
+* Java
+* VB/VBA
+* PHP, Python
+
+Recent Projects:
+* 7 channel seed counter and packet filler - Arduino and C#
+* RFID scanner for seed shipment validation - Wago, Impinj/LLRP and C#
+* ArcGIS script for tabulation of irrigation tracks to field trial plots - Python
