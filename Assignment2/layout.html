@@ -3,8 +3,13 @@
   <head>
     <meta charset="utf-8">
     <title>brauerr CS494 Assignment2</title>
+	<link rel="stylesheet" href="style.css">
   </head>
   <body>
+  
+    <!-- Main Table Example -->
+	<!-- Contain subsections within divs for scoped styling only to this table, dl, etc? -->
+  
     <table>
       <caption>Who wins?  Cell content indicates the status of the row entry</caption>
       <thead>
@@ -18,7 +23,7 @@
       <tfoot>
         <tr> 
 		  <td>Footer 1 
-		  <td>Footer 2
+		  <td colspan="4">Footer 2
       <tbody>
         <tr> 
 		  <td>Godzilla 
@@ -56,6 +61,9 @@
 		  <td>Unknown 
 		  <td>N/A
     </table>
+	
+	<!-- Description List Example -->
+	
     <dl>
       <dt>Best Language
       <dd>Python
@@ -64,5 +72,77 @@
       <dt>SEGFAULTiest Langauge
       <dd>C
     </dl>
+	
+	<!-- Form 1 Example, Submit via Get -->
+	<form action="layout.html" method="get">
+	  <fieldset>
+		<legend>Some GET Data</legend>
+	    <fieldset>
+	      Text here:
+	      <input type="text" name="text_input">
+		</fieldset>
+	    <fieldset>
+	      Number here:
+	      <input type="number" name="numerical_input">
+	    </fieldset>
+		<fieldset>
+	      Password here: 
+	      <input type="password" name="password_input">
+	    </fieldset>
+		<fieldset>
+	      Select between:
+	      <br>
+		  <input type="radio" name="candy" value="Snickers" selected>Snickers
+	      <br>
+	      <input type="radio" name="candy" value="Skittles">Skittles
+	      <br>
+	      <input type="radio" name="candy" value="Mentos">Mentos
+	      <br><br>
+	      <input type="submit">
+		</fieldset>
+      </fieldset>
+	</form>
+	
+	<!-- Form 2 Example, Submit via Post -->
+	
+    <form action="layout.html" method="post">
+	  <fieldset>
+		<legend>Some POST Data</legend>
+	    <fieldset>
+	      Text here:
+	      <input type="text" name="text_input">
+		</fieldset>
+	    <fieldset>
+	      Number here:
+	      <input type="number" name="numerical_input">
+	    </fieldset>
+		<fieldset>
+	      Password here: 
+	      <input type="password" name="password_input">
+	    </fieldset>
+		<fieldset>
+	      Select between:
+	      <br>
+		  <input type="radio" name="candy" value="Snickers" selected>Snickers
+	      <br>
+	      <input type="radio" name="candy" value="Skittles">Skittles
+	      <br>
+	      <input type="radio" name="candy" value="Mentos">Mentos
+	      <br><br>
+	      <input type="submit">
+		</fieldset>
+      </fieldset>
+	</form>
+	
+	<!-- Div Layout Example -->
+	
+	<!-- First 2 rows use only top and left margins, along with width, height, and float/clear -->
+	<!-- Last row for horizontal placement use only left and right margins on the right (indigo) div -->
+	<div id="red"></div>
+	<div id="orange"></div>
+	<div id="yellow"></div>
+	<div id="green"></div>
+	<div id="indigo"></div>
+	<div id="blue"></div>
   </body>
 </html>
