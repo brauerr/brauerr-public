@@ -9,9 +9,9 @@ asStringWithFoo: a string that is `a` with the string 'foo' appended
 a: the original a number
 */
 function variableModification(a) {
-  var plus5;
-  var asString;
-  var asStringWithFoo;
+  var plus5,
+    asString,
+    asStringWithFoo;
   //your code here
   plus5 = 5 + a;
   asString = a.toString();
@@ -29,7 +29,9 @@ return true if b is a primitive string value, false otherwise
 */
 function isString(b) {
   //your code here
-  if (typeof(b) == 'string') return true;
+  if (typeof b === 'string') {
+    return true;
+  }
   return false;
   //end your code
 }
@@ -43,7 +45,9 @@ return true if c is undefined, false otherwise
 */
 function isUndefined(c) {
   //your code here
-  if (c === undefined) return true;
+  if (c === undefined) {
+    return true;
+  }
   return false;
   //end your code
 }
