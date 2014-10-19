@@ -13,7 +13,9 @@ function variableModification(a) {
   var asString;
   var asStringWithFoo;
   //your code here
-
+  plus5 = 5 + a;
+  asString = a.toString();
+  asStringWithFoo = a + 'foo';
   return [plus5, asString, asStringWithFoo, a];
   //end your code
 }
@@ -27,7 +29,8 @@ return true if b is a primitive string value, false otherwise
 */
 function isString(b) {
   //your code here
-  return undefined;
+  if (typeof(b) == 'string') return true;
+  return false;
   //end your code
 }
 
@@ -40,6 +43,7 @@ return true if c is undefined, false otherwise
 */
 function isUndefined(c) {
   //your code here
-  return undefined;
+  if (c === undefined) return true;
+  return false;
   //end your code
 }
