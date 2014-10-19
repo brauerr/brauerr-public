@@ -33,7 +33,7 @@ var barType = typeof bar;
 //your code here
 var bar = function(doubleArray) {
   for(var i = 0; i < doubleArray.length; i++) {
-    if (typeof(doubleArray[i]) != 'number') return false;
+    if (typeof doubleArray[i] != 'number') return false;
     doubleArray[i] *= 2;
   }
   return true;
