@@ -1,4 +1,4 @@
-SimpleMath = function() {};
+var SimpleMath = function() {};
 /**
  * @param {number} number - input into the factorial function
  *
@@ -7,16 +7,17 @@ SimpleMath = function() {};
 */
 SimpleMath.prototype.getFactorial = function(number) {
 
-  if (typeof number != 'number') {
+  if (typeof number !== 'number') {
     throw new Error('There is no factorial for non-numbers');
   }
-  else if (number < 0) {
+  if (number < 0) {
     throw new Error('There is no factorial for negative numbers');
   }
   //your code here
-  else {
-    return undefined;
+  if (number < 2) {
+    return 1;
   }
+  return number * this.getFactorial(number - 1);
   //end your code
 };
 
@@ -27,9 +28,18 @@ SimpleMath.prototype.getFactorial = function(number) {
 * Behaviour on non-numbers is undefined.
 */
 SimpleMath.prototype.signum = function(number) {
- //your code here
- return undefined;
- //end your code
+  //your code here
+  if (typeof number !== 'number') {
+    return undefined;
+  }
+  if (number < 0) {
+    return -1;
+  }
+  if (number > 0) {
+    return 1;
+  }
+  return 0;
+  //end your code
 };
 
 /**
@@ -40,7 +50,13 @@ SimpleMath.prototype.signum = function(number) {
 */
 SimpleMath.prototype.average = function(number1, number2) {
   //your code here
-  return undefined;
+  if (typeof number1 !== 'number') {
+    return undefined;
+  }
+  if (typeof number2 !== 'number') {
+    return undefined;
+  }
+  return (number1 + number2) / 2;
   //end your code
 };
 
