@@ -32,8 +32,11 @@ var barType = typeof bar;
 
 //your code here
 var bar = function(doubleArray) {
-  for(var i = 0; i < doubleArray.length; i++) {
-    if (typeof doubleArray[i] != 'number') return false;
+  var i = 0;
+  for (i = 0; i < doubleArray.length; i++) {
+    if (typeof doubleArray[i] !== 'number') {
+      return false;
+    }
     doubleArray[i] *= 2;
   }
   return true;
@@ -55,9 +58,12 @@ var bar = function(doubleArray) {
 
 //your code here
 function emailParse(emailArray) {
-  var emails = [Array(emailArray.length), Array(emailArray.length), Array(emailArray.Length)];
-  var tempString;
-  for (var i = 0; i < emailArray.length; i++) {
+  var emails = [new Array(emailArray.length),
+      new Array(emailArray.length),
+      new Array(emailArray.Length)],
+    tempString,
+    i;
+  for (i = 0; i < emailArray.length; i++) {
     tempString = emailArray[i].split('@');
     emails[0][i] = tempString[0];
     tempString = tempString[1].split('.');

@@ -10,7 +10,9 @@
 
 function returnObjectLiteral() {
   //your code here
-  return {type : 'Goldfish', brand : 'Pepperidge Farm', flavor : 'Cheddar', count : 2000}; //Modify ONLY this line
+  //Modify ONLY this line
+  return {type : 'Goldfish', brand : 'Pepperidge Farm',
+    flavor : 'Cheddar', count : 2000};
   //end your code
 }
 
@@ -41,28 +43,29 @@ var Furniture = function(name, cost) {
 };
 
 var destroyFurniture = function(name, cost) {
-    this.furnitureArray.push(new Furniture(name, cost));
+  this.furnitureArray.push(new Furniture(name, cost));
 };
-  
+
 var lastDestroyedFurniture = function() {
-    var arrayLength = this.furnitureArray.length;
-    var myName = this.furnitureArray[arrayLength - 1].name;
-    var myCost = this.furnitureArray[arrayLength - 1].cost;
-    return {name : myName, cost : myCost};
+  var arrayLength = this.furnitureArray.length,
+    myName = this.furnitureArray[arrayLength - 1].name,
+    myCost = this.furnitureArray[arrayLength - 1].cost;
+  return {name : myName, cost : myCost};
 };
-  
+
 var totalDestroyed = function() {
-    var sum = 0;
-    for (var i = 0; i < this.furnitureArray.length; i++) {
-      sum += this.furnitureArray[i].cost;
-    }
-    return sum;
+  var sum = 0,
+    i = 0;
+  for (i = 0; i < this.furnitureArray.length; i++) {
+    sum += this.furnitureArray[i].cost;
+  }
+  return sum;
 };
 
 var nthDestroyed = function(n) {
-    var myName = this.furnitureArray[n].name;
-    var myCost = this.furnitureArray[n].cost;
-    return {name : myName, cost : myCost};
+  var myName = this.furnitureArray[n].name,
+    myCost = this.furnitureArray[n].cost;
+  return {name : myName, cost : myCost};
 };
 
 var Cat = function(name, color) {
