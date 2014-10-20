@@ -100,7 +100,9 @@ myCat.destroyFurniture('Sofa', 1000);
 */
 //your code here
 var pet = function(n) {
-  if (n > 2.5) return 'CLAW!';
+  if (n > 2.5) {
+    return 'CLAW!';
+  }
   return 'Purr.';
 }
 
