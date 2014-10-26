@@ -4,6 +4,7 @@
 //and put in format to construct GET request
 //Source:  
 //http://stackoverflow.com/questions/111529/create-query-parameters-in-javascript
+
 function encodeQueryData(data) {
   var ret = [],
     d;
@@ -72,8 +73,6 @@ function ajaxRequest(URL, Type, Parameters) {
   return {'success': success, 'code': myCode,
       'codeDetail': myCodeDetail, 'response': myResponse};
 }
-
-
 
 function localStorageExists() {
   //should return true if able to read and write from local storage
