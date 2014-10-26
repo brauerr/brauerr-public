@@ -6,7 +6,31 @@
     <link rel="stylesheet" href="weatherstyle.css">
   </head>
   <body>
-  
-  
+    <div id="weather_input">
+      <fieldset>
+      <legend>Choose and Save your Location and Weather Data to be Returned</legend>
+      City: 
+      <input type="text" name="city_name">
+      State:
+      <select id="state_select">
+        <option value="CA">CA</option>
+        <option value="OR">OR</option>
+        <option value="WA">WA</option>
+      </select>
+      <br>
+      <input type="checkbox" name="Wind"> Wind
+      <br>
+      <input type="checkbox" name="Max_Temp"> Max Temperature
+      <br>
+      <input type="checkbox" name="Min_Temp"> Min Temperature
+      <br>
+      <input type="checkbox" name="Current_Temp"> Current Temperature
+      <br>
+      <input type="button" value="Save Settings" onclick="saveWeatherSettings()">
+      <br>
+      <input type="button" value="Get Weather" onclick="getWeather()">
+ 
+      </fieldset>
+    </div>
   </body>
 </html>
