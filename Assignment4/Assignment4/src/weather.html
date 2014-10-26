@@ -3,6 +3,7 @@
   <head>
     <meta charset='utf-8'>
     <script src="studentlibrary.js"></script>
+    <script src="weather.js"></script>
     <link rel="stylesheet" href="weatherstyle.css">
   </head>
   <body>
@@ -29,7 +30,19 @@
       <input type="button" value="Save Settings" onclick="saveWeatherSettings()">
       <br>
       <input type="button" value="Get Weather" onclick="getWeather()">
- 
+      </fieldset>
+    </div>
+    <div id="weather_output">
+      <fieldset id="output_Fieldset">
+        <legend>Weather Data Courtesy of openweathermap.org</legend>
+        <p id="output_City">
+        <p id="output_State">
+        <p id="output_Current_Temp">
+        <p id="output_Max_Temp">
+        <p id="output_Min_Temp">
+        <p id="output_Wind_Speed">
+        <p id="output_Wind_Dir">
+        <p id="invalid_City">
       </fieldset>
     </div>
   </body>
