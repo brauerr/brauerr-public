@@ -33,7 +33,7 @@ var barType = typeof bar;
 //your code here
 var bar = function(doubleArray) {
   var i = 0;
-  for (i = 0; i < doubleArray.length; i++) {
+  for (i = 0; i < doubleArray.length; i += 1) {
     if (typeof doubleArray[i] !== 'number') {
       return false;
     }
@@ -63,7 +63,7 @@ function emailParse(emailArray) {
       new Array(emailArray.Length)],
     tempString,
     i;
-  for (i = 0; i < emailArray.length; i++) {
+  for (i = 0; i < emailArray.length; i += 1) {
     tempString = emailArray[i].split('@');
     emails[0][i] = tempString[0];
     tempString = tempString[1].split('.');

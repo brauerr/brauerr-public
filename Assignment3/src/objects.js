@@ -56,7 +56,7 @@ var lastDestroyedFurniture = function() {
 var totalDestroyed = function() {
   var sum = 0,
     i = 0;
-  for (i = 0; i < this.furnitureArray.length; i++) {
+  for (i = 0; i < this.furnitureArray.length; i += 1) {
     sum += this.furnitureArray[i].cost;
   }
   return sum;
@@ -68,7 +68,7 @@ var nthDestroyed = function(n) {
   return {name : myName, cost : myCost};
 };
 
-var Cat = function(name, color) {
+function Cat(name, color) {
   this.name = name;
   this.color = color;
   this.furnitureArray = [];
@@ -99,12 +99,10 @@ myCat.destroyFurniture('Sofa', 1000);
 * @return {string} - The cats reaction.
 */
 //your code here
-var pet = function(n) {
+Cat.prototype.pet = function(n) {
   if (n > 2.5) {
     return 'CLAW!';
   }
   return 'Purr.';
-}
-
-Cat.prototype.pet = pet;
+};
 //end your code
