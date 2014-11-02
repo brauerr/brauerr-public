@@ -1,30 +1,44 @@
-//multtable.php
+<?php
+    //multtable.php
+    ini_set('display-errors', '1');
+    error_reporting('E_ALL');
+?>
 
-/*
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Multiplication Table</title>
+    </head>
+  
+    <body>
+        <?php
+            /**  some documentation
+            @category
+            @package
+            @author
+            @license
+            @link
+            @URL  https://web.engr.oregonstate.edu/~brauerr/Assignment5/src/multtable.php?max-multiplicand=9&min-multiplicand=1&max-multiplier=9&min-multiplier=1
+            */
+        
+            $minMultiplicand = $_GET['min-multiplicand'];
+            $maxMultiplicand = $_GET['max-multiplicand'];
+            $minMultiplier = $_GET['min-muliplier'];
+            $maxMultiplier = $_GET['max-multiplier'];
+            $width = 2 + $maxMultiplier - $minMultiplier;
+            $height = 2 + $maxMultiplicand - $minMultiplicand;
+            
+            //check to ensure max values are larger than min values
+            //check to ensure all values are populated and are integers
+            //create multiplication table and output to screen in valid html5
 
-This file should accept 4 parameters passed via the URL in a GET request.
-
-min-multiplicand
-max-multiplicand
-min-multiplier
-max-multiplier
-It should check than the min is in fact less than or equal to the max multiplicand and multiplier respectively. 
-If it is not, it should print the message "Minimum [multiplicand|multiplier] larger than maximum.". 
-It should also check that the values returned are integers for each parameter. 
-If it is not it should print 1 message for each invalid input 
-"[min-multiplicand...max-multiplier] must be an integer.". 
-It should check that all 4 parameters exist for each missing parameter it should print 
-"Missing parameter [min-multiplicand ... max-multiplier].".
-
-If all of the above conditions are met, it should produce a multiplication table that is 
-(max-multiplicand - min-multiplicand + 2) tall and 
-(max-multiplier - min-multiplier + 2) wide. 
-The upper left cell should be empty. 
-The left column should have integers running from min-multiplicand through max-multiplicand inclusive. 
-The top row should have integers running from min-multiplier to max-multiplier inclusive. 
-Every cell within the table should be the product of the corresponding multiplicand and multiplier.
-
-To accomplish the above task you will want to work with loops to dynamically create rows and within each row, 
-loop to create the cells. It should output as a valid HTML5 document.
-
-*/
+            echo $minMultiplicand;
+            echo $maxMultiplicand;
+        
+            echo '<p>Hello World</p>';
+            echo $_SERVER['HTTP_USER_AGENT'];
+        ?>
+    
+    </body>
+</html>
