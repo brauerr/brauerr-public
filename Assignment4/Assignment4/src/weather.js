@@ -65,7 +65,7 @@ function displayWeather(weatherObject) {
 
   if (document.getElementsByName('Wind')[0].checked) {
     outputWindSpeed.innerHTML = 'Wind Speed (mph): ' + windSpeed +
-        '   (m/s): ' + (windSpeed * 0.44704).toFixed(1);
+        '   (m/s): ' + (windSpeed * 0.44704).toFixed(2);
     outputWindDir.innerHTML = 'Wind Direction (degrees): ' + windDir;
   } else {
     outputWindSpeed.innerHTML = '';
