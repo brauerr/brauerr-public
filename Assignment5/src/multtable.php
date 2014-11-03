@@ -83,7 +83,7 @@
                 $j = 0;
                 $value = 0;
                 
-                //create table embedded html
+                //create table with embedded html
                 echo '<table>
                 <caption>Multiplication Table</caption>
                 <tbody>
