@@ -30,9 +30,9 @@
         
         if (!isset($_SESSION['visits'])) {
             $_SESSION['visits'] = 0;
+        } else if ($_POST['username'] != "" && $_POST['username'] != null) {
+            $_SESSION['visits']++;
         }
-        
-        $_SESSION['visits']++;
     }
 
     echo "<!DOCTYPE html>";
@@ -48,7 +48,8 @@
         echo "<a href=\"login.php\">here </a>";
         echo "to return to the login screen";
     } else {
-        echo "Hello $_SESSION[username] you have visited this page $_SESSION[visits] times before.<br>";
+        echo "Hello $_SESSION[username] ";
+        echo "you have visited this page $_SESSION[visits] times before.<br>";
         echo "Click ";
         echo "<a href=\"content.php?action=end\">here </a>";
         echo "to logout."; 

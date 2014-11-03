@@ -25,8 +25,8 @@
             
             //check to ensure max values are larger than min values
             if ($maxMultiplicand < $minMultiplicand) {
-              echo "Minimum multiplicand larger than maximum<br>";
-              $getValuesOk = false;
+                echo "Minimum multiplicand larger than maximum<br>";
+                $getValuesOk = false;
             }
             if ($maxMultiplier < $minMultiplier) {
                 echo "Minimum multiplier larger than maximum<br>";
@@ -74,7 +74,8 @@
                 printMultTable($minMultiplicand, $maxMultiplicand, $minMultiplier, $maxMultiplier);
             }
             
-            function printMultTable($minMultiplicand, $maxMultiplicand, $minMultiplier, $maxMultiplier) {
+            function printMultTable($minMultiplicand, $maxMultiplicand, $minMultiplier, $maxMultiplier)
+            {
                 //set width and height of table
                 $width = 2 + $maxMultiplier - $minMultiplier;
                 $height = 2 + $maxMultiplicand - $minMultiplicand;
@@ -82,8 +83,7 @@
                 $j = 0;
                 $value = 0;
                 
-                //create table - dynamically create a populate rows and cells within rows
-                //create array with resulting values separately?
+                //create table embedded html
                 echo '<table>
                 <caption>Multiplication Table</caption>
                 <tbody>

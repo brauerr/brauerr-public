@@ -7,25 +7,26 @@
     
     <body>
         <?php
-            //loopback.php
-
             /*
-
             This file should accept either a GET or POST for input. 
             That GET or POST will have an unknown number of key/value pairs. 
-            The page should return a JSON object (remember, this is almost identical to an object literal in JavaScript) 
-            of the form {"Type":"[GET|POST]","parameters":{"key1":"value1", ... ,"keyn":"valuen"}}. 
+            The page should return a JSON object 
+            (remember, this is almost identical to an object literal in JavaScript) 
+            of the form 
+            {"Type":"[GET|POST]",
+            "parameters":{"key1":"value1", ... ,"keyn":"valuen"}}. 
             Behavior if a key is passed in and no value is specified is undefined. 
             If no key value pairs are passed it it should return 
             {"Type":"[GET|POST]", "parameters":null}. 
-            You are welcome to use built in JSON function in PHP to produce this output.
-
+            You are welcome to use built in JSON function 
+            //in PHP to produce this output.
             */
             
             ini_set('display-errors', '1');
             error_reporting('E_ALL');
             
-            //example taken from http://stackoverflow.com/questions/15220704/how-to-detect-if-post-is-set
+            //example taken from 
+            //stackoverflow.com/questions/15220704/how-to-detect-if-post-is-set
             //check to see if request was POST or GET
             
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
