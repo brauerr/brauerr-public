@@ -15,30 +15,51 @@ include 'storedInfo.php'; //for storing password and other secure data
     $myConnection = new mysqli("oniddb.cws.oregonstate.edu", "brauerr-db", $myPassword, "brauerr-db");
     if ($myConnection->connect_errno) {
       echo "Failed to connect to MySQL: (" . $myConnection->connect_errno . ") " . $myConnection->connect_error;
-    } else {
-      echo "Connection worked!".PHP_EOL;
-    }
+    } 
 
-    //process GET info here - one of 4 things
+    //process POST info here - one of 4 things
     
     //****** ONE - add a product
     if (isset($_POST['addProduct'])) {
       //verify data format from POST and assign to variables
-      $name = $_POST['productName']; //unique and less than 255 characters
+      $name = $_POST['productName']; //unique, required, and less than 255 characters
       $category = $_POST['productCategory']; //less than 255 characters
       $price = $_POST['productPrice']; //convertable to decimal format
+      $dataOk = true;
+      if (!is_numeric($price)) {
+        echo "Price value submitted is not numeric".PHP_EOL;
+        $dataOk = false;
+      }
+      if (!(strlen($name) <= 255)) {
+        echo "Name of product is longer than 255 characters".PHP_EOL;
+        $dataOk = false;
+      }
+      if (!(strlen($category) <= 255)) {
+        echo "Category of product is longer than 255 characters".PHP_EOL;
+        $dataOk = false;
+      }
+      if ($name == "") {
+        echo "Name of product is required".PHP_EOL;
+        $dataOk = false;
+      }
+      if ((double)($price) > 999.99) {
+        echo "Price of product is greater than $999.99".PHP_EOL;
+        $dataOk = false;
+      }
       
       //prepared statement to add data
-      if (!($stmt = $myConnection->prepare("INSERT INTO grocery_inventory(name, category, price) VALUES (?,?,?)"))) {
-        echo "Prepare failed: (" . $myConnection->errno . ") " . $myConnection->error;
+      if ($dataOk) {
+        if (!($stmt = $myConnection->prepare("INSERT INTO grocery_inventory(name, category, price) VALUES (?,?,?)"))) {
+          echo "Prepare failed: (" . $myConnection->errno . ") " . $myConnection->error;
+        }
+        if (!$stmt->bind_param("ssd", $name, $category, $price)) {
+          echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+        }
+        if (!$stmt->execute()) {
+          echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+        }
+        $stmt->close(); //explicitly close statement
       }
-      if (!$stmt->bind_param("ssd", $name, $category, $price)) {
-        echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
-      }
-      if (!$stmt->execute()) {
-        echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
-      }
-      $stmt->close(); //explicitly close statement
     }
 
     //******* TWO - delete a single product from table
@@ -62,13 +83,53 @@ include 'storedInfo.php'; //for storing password and other secure data
     }
     
     //******* THREE - alter price of a category
-    if (isset($_POST['alterPrice'])) {
-
+    if (isset($_POST['alterPrices'])) {
+      $percentAdjust = $_POST['alterPercent'];
+      $category = $_POST['productCategory'];
+      $dataOk = true;
+      $productId= 0;
+      $productPrice= 0;
+      $newPrice = 0;
+      
+      if (!is_numeric($percentAdjust)) {
+        echo "Percent to adjust price for ${category} must be numeric";
+        $dataOk = false;
+      }
+      
+      if ($dataOk) {
+        if (!($stmt = $myConnection->prepare("SELECT id, price FROM grocery_inventory WHERE category = ?"))) {
+          echo "Prepare failed: (" . $myConnection->errno . ") " . $myConnection->error;
+        }
+        if (!$stmt->bind_param("s", $category)) {
+          echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+        }
+        if (!$stmt->execute()) {
+          echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+        }
+        if (!$stmt->bind_result($productId, $productPrice)) {
+          echo "Binding results failed: (" . $stmt->errno . ") " . $stmt->error;
+        }
+        $stmt->store_result();
+        while ($stmt->fetch()) {
+          $newPrice = $productPrice * $percentAdjust / 100;
+          if (!($stmt2 = $myConnection->prepare("UPDATE grocery_inventory SET price = ? WHERE id = ?"))) {
+            echo "Prepare failed: (" . $myConnection->errno . ") " . $myConnection->error;
+          }
+          if (!$stmt2->bind_param("ds", $newPrice, $productId)) {
+            echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+          }
+          if (!$stmt2->execute()) {
+            echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+          }
+          $stmt2->close();
+        }
+        $stmt->close();
+      }
     }
 
     //******* FOUR - delete all products
     if (isset($_POST['deleteAllProducts'])) {
-
+      $myConnection->query("TRUNCATE TABLE grocery_inventory");
     }
 
     ?>
@@ -105,31 +166,34 @@ include 'storedInfo.php'; //for storing password and other secure data
           //Used as reference for creating delete buttons
           //http://stackoverflow.com/questions/16293741/original-purpose-of-input-type-hidden
         
-          //display table of current products
-          //create table, 4 columns - name, category, price, and delete button
-          $i = 1;
-          $numProducts = 3;
-          $showName = "carrot";
-          $showCategory = "vegetable";
-          $showPrice = "1.29";
-          $id = 9;
+          $outName = "";
+          $outCategory = "";
+          $outPrice = "";
+          $id = 0;
           
-          //figure out size of table and set up loop
-          
-          
-          //query every row in table and display results - creating delete button each time
-          for ($i = 1; $i <= $numProducts; $i++) {
-            //set id variable
+          //pull data from table
+          //display results with delete form with value tied to id
+          if (!($stmt = $myConnection->prepare("SELECT id, name, category, price FROM grocery_inventory"))) {
+            echo "Prepare failed: (" . $myConnection->errno . ") " . $myConnection->error;
+          }
+          if (!$stmt->execute()) {
+          echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+          }
+          if (!$stmt->bind_result($id, $outName, $outCategory, $outPrice)) {
+            echo "Binding results failed: (" . $stmt->errno . ") " . $stmt->error;
+          }
+          while ($stmt->fetch()) {
             echo "<tr>
-            <td>$showName
-            <td>$showCategory
-            <td>$showPrice
+            <td>$outName
+            <td>$outCategory
+            <td>$outPrice
             <td>
               <form action=\"groceryInventory.php\" method=\"POST\">
                 <input type=\"hidden\" name=\"rowToDelete\" value=\"${id}\">
                 <input type=\"submit\" name=\"deleteProduct\" value=\"Delete\">
               </form>";
           }
+          $stmt->close();
         ?>
         
       </table>
@@ -137,30 +201,39 @@ include 'storedInfo.php'; //for storing password and other secure data
     
     <fieldset>
       <legend>Adjust Price of Inventory Category</legend>
-      <form action="groceryInventory.php">
+      <form action="groceryInventory.php" method="POST">
     
         <?php
           //alter prices of all products in a category
           //query all products in a category
-          
+          //Example taken from:
+          //http://stackoverflow.com/questions/8571902/mysql-select-only-unique-values-from-a-column
           
           //set loop equal to number of rows returned and populate drop down
-          $i = 1;
-          $numProducts = 3;
-          $category = "abc";
+          $category = "";
           
           echo "Product Category:
-          <select id=\"productCategory\">";
+          <select name=\"productCategory\">";
+          
+          if (!($stmt = $myConnection->prepare("SELECT DISTINCT category FROM grocery_inventory ORDER BY category"))) {
+            echo "Prepare failed: (" . $myConnection->errno . ") " . $myConnection->error;
+          }
+          if (!$stmt->execute()) {
+          echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+          }
+          if (!$stmt->bind_result($category)) {
+            echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+          }
                     
-          for ($i = 0; $i < $numProducts; $i++) {
+          while($stmt->fetch()) {
             echo "<option value=\"${category}\">${category}</option>";
           }
           
           echo "</select>
           <br>
-          Percent to Adjust By: <input type=\"number\" name=\"alterPercent\">
+          Percent to Adjust By: <input type=\"text\" name=\"alterPercent\">%
           <br>
-          <input type=\"button\" name=\"alterPrices\" value=\"Alter Prices\" action=\"\">
+          <input type=\"submit\" name=\"alterPrices\" value=\"Alter Prices\">
           <br>";
         ?>
         
