@@ -77,9 +77,6 @@ include 'storedInfo.php'; //for storing password and other secure data
         echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
       }
       $stmt->close();
-      
-      /*mysqli_query($myConnection, "DELETE FROM grocery_inventory
-                                   WHERE id = ". $_POST['rowToDelete']);*/
     }
     
     //******* THREE - alter price of a category
