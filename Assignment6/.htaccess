@@ -1,0 +1,2 @@
+php_value session.save_handler files
+php_value session.save_path "/nfs/stak/students/b/brauerr/public_html/Assignment6/sessions"
