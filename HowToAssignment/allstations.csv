@@ -1,4 +1,4 @@
-ghcnd,lat,long,elevation,state,station_name
+ghcnd,lat_dec,long_dec,elevation,state,station_name
 USC00513054,19.0106,-155.6592,317,HI,KAMAOA PUUEO 5.1
 USC00516588,19.0647,-155.5886,245.7,HI,NAALEHU 14
 USC00512568,19.0653,-155.6781,667.5,HI,KAHUKU MILL CAMP 6.3
