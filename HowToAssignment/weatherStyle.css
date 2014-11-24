@@ -2,3 +2,11 @@
   text-align: left;
   width: 600px;
 }
+
+div {
+  width: 100%;
+}
+
+img {
+  width: 600px;
+}

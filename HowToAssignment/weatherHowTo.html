@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" link="weatherStyle.css">
+    <title>Weather How To</title>
+  </head>
+  
+  <body>
+    <h1>
+      Retrieving and visualizing historical weather data by zipcode,
+      utilizing NCDC (National Climatic Data Center) API V2 and dimple.js
+    </h1>
+    <p> 
+      This walkthrough will deal in detail with utilization of the V2 web services provided by the National Climatic Data Center.
+      The NCDC has extensive databases of weather data from around the world for many decades, in some cases over 100 years.
+      The web services documentation can be accessed from this link:
+    </p>
+    <a href="http://www.ncdc.noaa.gov/cdo-web/webservices/v2">
+      http://www.ncdc.noaa.gov/cdo-web/webservices/v2
+    </a><br><br>
+    <img src="images/noaa.png">
+    <p>
+      Unfortunately, the documentation is relatively sparse, particularly when it comes to detailing the
+      metadata for the numerous datasets, and the permissible field values for the different
+      request types available through the service.  Here is a table of all the datasets available from
+      the NCDC, either by flat files that can be requested from their web portal,
+      or though their web services for integration with other web apps. 
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Dataset Name
+          <th>Dataset Description
+      </thead>
+      <tbody>
+        <tr>
+          <td>ANNUAL
+          <td>Annual Summaries
+        <tr>
+          <td>GHCND
+          <td>Daily observations from around the world
+        <tr>
+          <td>GHCNDMS
+          <td>Monthly averages and extremes using global daily data
+        <tr>
+          <td>NORMAL_ANN
+          <td>Annual and seasonal climate 30 years normals from 1981 to 2010
+        <tr>
+          <td>NORMAL_DLY
+          <td>Daily 30 year normals from 1981 to 2010
+        <tr>
+          <td>NORMAL_HLY
+          <td>Hourly normals from 1981 to 2010
+        <tr>
+          <td>NORMAL_MLY
+          <td>Monthly normals from 1981 to 2010
+        <tr>
+          <td>PRECIP_HLY
+          <td>Historical hourly precipitation from selected US stations
+        <tr>
+          <td>PRECIP_15
+          <td>Historical 15 minute precipitation from selected US stations
+      </tbody>
+    </table>
+    <p>More details on these datasets can be found here:</p>
+    <a href="http://www.ncdc.noaa.gov/cdo-web/datasets">
+      http://www.ncdc.noaa.gov/cdo-web/datasets
+    </a><br><br>
+    <p>
+      For this walkthrough, we will use the NORMAL_DLY dataset, which contains data on daily
+      normal weather in a large variety of fields, based on data from 30 years between 1980 and 2010
+      from over 9000 weather stations, mostly in the US.  A good description of the
+      weather fields available in this dataset can be found at this link:
+    </p>
+    <a href="http://www1.ncdc.noaa.gov/pub/data/cdo/documentation/NORMAL_DLY_documentation.pdf">
+      http://www1.ncdc.noaa.gov/pub/data/cdo/documentation/NORMAL_DLY_documentation.pdf
+    </a><br><br>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Field Name
+          <th>Field Description
+      </thead>
+      <tbody>
+        <tr>
+          <td>DLY-TMIN-NORMAL
+          <td>Normal min temperature in degrees F for a given day
+        <tr>
+          <td>DLY-TMAX-NORMAL
+          <td>Normal max temperature in degrees F for a given day
+        <tr>
+          <td>DLY-PRCP-PCTALL-GE001HI
+          <td>% Chance of 0.01 inches or more precipitation for a given day
+      </tbody>
+    </table>
+    <p>
+      One useful thing a user might like to do is to graph the 30 year normals for the year
+      at a selected location.  A nice graphing web API is dimple.js.  This is an extension
+      of the powerful but complex d3.js library.  The tools enable visualizations like charts
+      and many other things by implementing scalable vector graphics (SVG) in a web app and
+      manipulating the graphics based off data and styles you provide.  Information about dimple.js,
+      including the split line chart we will adapt for our weather web page, can be found at these links:
+    </p>
+    <a href="http://dimplejs.org/examples_viewer.html?id=lines_horizontal_stacked">
+      http://dimplejs.org/examples_viewer.html?id=lines_horizontal_stacked
+    </a><br><br>
+    <a href="https://github.com/PMSI-AlignAlytics/dimple">
+      https://github.com/PMSI-AlignAlytics/dimple
+    </a><br><br>
+    <p>
+      Using dimple, once your dataset is formatted in an acceptable JSON format (more
+      on that later), it takes just 10-20 lines of javascript code to get your
+      charts up and running!  Cool eh?
+    </p>
+    <p>
+      One final limitation of the NCDC webservices, and actually their flat file
+      retrieval engine, as well, is that the user must request data by a specific
+      locationid or stationid.  These locations and stations are not linked to zipcodes
+      or cities, and there is no engine to retrieve the nearest station to a zipcode,
+      a city, or even latitude and longitude coordinates.  Never fear, we will just
+      build a quick engine to do this ourselves, using a simple mySQL database and
+      a little web service from geocoder.us, which will allow us to submit a zipcode
+      and receive back the latitude and longitude of the centroid of that zipcode's area.  
+    </p>
+    <a href="http://geocoder.us/help/city_state_zip.shtml">
+      http://geocoder.us/help/city_state_zip.shtml
+    </a><br><br>
+    <p>Ready to get started?  Let's go!</p>
+    <p>The link to the running web page is here:</p>
+    <a href="http://web.engr.oregonstate.edu/~brauerr/HowToAssignment/weather.php">
+      http://web.engr.oregonstate.edu/~brauerr/HowToAssignment/weather.php
+    </a><br><br>
+    <p>The files and documentation can be accessed from Github here:</p>
+    <a href="https://github.com/OSU-CS494-F14/brauerr-Student/tree/master/HowToAssignment">
+      https://github.com/OSU-CS494-F14/brauerr-Student/tree/master/HowToAssignment
+    </a><br><br>
+    <h2>1) Build the mySQL Database:</h2>
+    <p>
+      Before beginning, make sure you have retrieved the allstations.csv file from the
+      github repository above, or retrieved the station data you desire in .txt format
+      from the NCDC site and processed into a .csv file.  The NCDC link to retrieve
+      station data for NORMAL_DLY can be found here:
+    </p>
+    <a href="ftp://ftp.ncdc.noaa.gov/pub/data/normals/1981-2010/station-inventories/allstations.txt">
+      ftp://ftp.ncdc.noaa.gov/pub/data/normals/1981-2010/station-inventories/allstations.txt
+    </a><br><br>
+    <p>
+      For this tutorial, we will be using phpMyAdmin.  From your main database screen, create
+      a new database with the number of fields equal to the number of columns in your .csv file,
+      plus a unique id field for your primary database key.  If you are using the allstations.csv
+      file from the github link for this tutorial, you will add 7 fields.  
+    </p>
+    <img src="images/create database.jpg">
+    <p>
+      Populate the information for each field.  Make sure your id field is first, set to
+      auto_increment, and checked as a primary key, else the .csv import may not work
+      correctly.  The setup for the allstations.csv data can be seen in this screenshot:
+    </p>
+    <div>
+      <img src="images/field metadata.jpg">
+    </div>
+    <p>
+      Now, we will import the data from the .csv file to the mySQL database.  Click the
+      Import tab.  Click choose file and navigate to your .csv file.  If you have column
+      headers in your file, set the number of records to skip from start equal to 1.  Set
+      the format to csv, fields terminated by a comma, fields enclosed by blank, fields
+      escaped by backslash, lines terminated by "auto", and column names should be the
+      column names in your database, excluding the "id" field, in the order in which they
+      occur in your .csv file, the names separated by commas with no spaces.  An example can
+      be seen in this screenshot:
+    </p>
+    <div>
+      <img src="images/import database.jpg">
+    </div>
+    <p>
+      We now have a database!  Take a note of your database name and password, the
+      URL to your database, and your table and field names, we will be using those soon.
+    </p>
+    <h2>2) Build the Basic Search by Zipcode Engine and Interface</h2>
+    
+  </body>
+</html>
