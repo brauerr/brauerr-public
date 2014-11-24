@@ -3,10 +3,11 @@
   width: 600px;
 }
 
-div {
-  width: 100%;
-}
-
-img {
-  width: 600px;
+table,
+td,
+th {
+  border: 1px solid black;
+  text-align: center;
+  border-spacing: 2px;
+  padding: 2px;
 }

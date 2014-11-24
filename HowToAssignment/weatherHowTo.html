@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" link="weatherStyle.css">
+    <link rel="stylesheet" href="weatherStyle.css">
     <title>Weather How To</title>
   </head>
   
@@ -152,15 +152,13 @@
       plus a unique id field for your primary database key.  If you are using the allstations.csv
       file from the github link for this tutorial, you will add 7 fields.  
     </p>
-    <img src="images/create database.jpg">
+    <img src="images/create database.jpg" style="width: 800px">
     <p>
       Populate the information for each field.  Make sure your id field is first, set to
       auto_increment, and checked as a primary key, else the .csv import may not work
       correctly.  The setup for the allstations.csv data can be seen in this screenshot:
     </p>
-    <div>
-      <img src="images/field metadata.jpg">
-    </div>
+    <img src="images/field metadata.jpg" style="width: 800px">
     <p>
       Now, we will import the data from the .csv file to the mySQL database.  Click the
       Import tab.  Click choose file and navigate to your .csv file.  If you have column
@@ -171,14 +169,197 @@
       occur in your .csv file, the names separated by commas with no spaces.  An example can
       be seen in this screenshot:
     </p>
-    <div>
-      <img src="images/import database.jpg">
-    </div>
+    <img src="images/import database.jpg" style="width: 800px">
     <p>
       We now have a database!  Take a note of your database name and password, the
       URL to your database, and your table and field names, we will be using those soon.
     </p>
     <h2>2) Build the Basic Search by Zipcode Engine and Interface</h2>
+    <p>
+      Alright, database is done, let's start actually building the web page.  First, 
+      we want to collect a zipcode from the user - process it into a latitude and longitude,
+      and retrieve the closest weather station to those coordinates from our database.
+      I always start my .php documents by setting display errors to on, php debugging
+      can be a pain, but this does help, printing some errors to the actual page.
+      I will also include a file called storedInfo.php.  This is a simple file with just
+      a few lines of code - in this case one - a php variable $myPassword containing,
+      you guessed it, the password to the mySQL database we just created.  This way,
+      you can set different permissions to the file with your password that you might
+      set to the files with the rest of your web page code.  
+    </p>
+    <pre><code>
+      //php code for start of main php file
+      ini_set('display_errors', 'On');
+      include 'storedInfo.php'; //for storing password and other secure data
+      
+      //php code for storedInfo.php
+      $myPassword = "youractualpasswordgoeshere";
+    </code></pre>
+    <p>
+      Now, lets create some basic html code to collect a zipcode from a user
+      and submit it via a get request.  The code should look something like this,
+      just a text input for the zipcode, and a button to submit to the same page via
+      the GET method.  Feel free to add some styling by linking a stylesheet, as
+      I've done here.  
+    </p>
+    <img src="images/Initial Html.jpg" style="width: 800px">
+    <p>Your base page should look something like this:</p>
+    <img src="images/base page.jpg" style="width: 800px">
+    <p>
+      Now let's write the php code to handle that zipcode we just submitted and
+      turn it into latitude and longitude coordinates.  This example also uses
+      cURL to handle the data request, since it is from another server/domain.
+      You should be able to just follow the format in the following code, but
+      more documentation on cURL can be found here:
+    </p>
+    <a href="http://www.tuxradar.com/practicalphp/15/10/03">
+      http://www.tuxradar.com/practicalphp/15/10/03
+    </a><br><br>
+    <p>
+      Notice that we first check if retrieveData was set in the GET request, meaning
+      the button was pressed.  We only want this code to run if a zipcode was submitted. 
+    </p>
+    <img src="images/convert zip code.jpg" style="width: 800px">
+    <p>
+      Next, we will use a bit of math, the haversine formula, in a mySQL query to find
+      the distance between our set of coordinates and the stations in our database.
+      To make the search a bit faster, since the haversine formula is a bit nasty, taking
+      into to account the irregular curvature of the earth and all that, we will limit our
+      search to 0.5 degrees plus and minus our coordinates.  A great document on using
+      the haversine formula to search for nearest neighbors based on latitude and longitude
+      can be found here: 
+    </p>
+    <a href="http://www.scribd.com/doc/2569355/Geo-Distance-Search-with-MySQL">
+      http://www.scribd.com/doc/2569355/Geo-Distance-Search-with-MySQL
+    </a><br><br>
+    <p>
+      Here is our code, using mysqli prepared statements and the allstations.csv data structure.
+      Since we order by distance, the first result will be the closest station to our
+      coordinates, and that is the one that we will use. 
+    </p>
+    <pre><code>
+      $minLat = $lat - 0.5;
+      $maxLat = $lat + 0.5;
+      $minLong = $long - 0.5;
+      $maxLong = $long + 0.5;
+      
+      if(!($stmt = $myConnection->prepare("SELECT ghcnd, station_name, state, 3956 * 2 * ASIN(SQRT(POWER(SIN((
+          ? - lat_dec) * pi() / 180 / 2), 2) + COS(? * pi() / 180) * COS(lat_dec * pi() / 180)
+          * POWER(SIN((? - long_dec) * pi() / 180 / 2), 2))) as distance FROM ncdc_normal_dly_stations
+          WHERE lat_dec between ? and ? and long_dec between ? and ? ORDER BY distance"))) {
+
+        echo "Prepare failed: (" . $myConnection->errno . ") " . $myConnection->error;
+      }
+      if(!$stmt->bind_param("ddddddd", $lat, $lat, $long, $minLat, $maxLat, $minLong, $maxLong)) {
+        echo "Binding parameters failed: (" . $myConnection->errno . ") " . $myConnection->error;
+      }
+      if(!$stmt->execute()) {
+        echo "Execute failed: (" . $myConnection->errno . ") " . $myConnection->error;
+      }
+      if(!$stmt->bind_result($ghcnd, $stationName, $state, $distance)){
+        echo "Result binding failed: (" . $myConection->errno . ") " . $myConnection->error;
+      } else {
+        $stmt->fetch();
+      }
+      $stmt->close();
+    </code></pre>
+    <h2>3)Get Data From NCDC</h2>
+    <p>
+      So now we know exactly which station is closest to our zipcode, and we are ready to get
+      our data from the NCDC.  First, a little housekeeping.  To request data from the NCDC web service,
+      you need to register for a token.  Follow this link, and they will send you a token good for
+      1000 request per day to whichever email you provide them.
+    </p>
+    <a href="http://www.ncdc.noaa.gov/cdo-web/token">
+      http://www.ncdc.noaa.gov/cdo-web/token
+    </a>
+    <p>
+      Once you have your token, let's request some data!  Remember, we are going to make three
+      separate requests, one for daily max temperatures, one for daily min temp, and one for
+      daily chance of precipitation.  
+    </p>
+    <p>The basic format for each request is this code, just swap in the appropriate datatypeid:</p>
+    <pre><code>
+      $curl = curl_init();;
+      curl_setopt ($curl, CURLOPT_URL,
+        "http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=NORMAL_DLY&stationid=GHCND:{$ghcnd}&datatypeid=DLY-TMAX-NORMAL&startdate=2010-01-01&enddate=2010-12-31&limit=365");
+      curl_setopt ($curl, CURLOPT_HTTPHEADER, array("token:SVyCZAPbcpzDMPOohQqfgtnYoffvejDQ"));
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+      $maxTemp = json_decode(curl_exec($curl), true); //associative array format
+      curl_close($curl);
+    </code></pre>
+    <p>
+      Notice that we make sure to submit the key that you received from the NCDC in the header
+      of your cURL request.  For the URL, notice that the start date is always 2010-01-01.
+      The end date can be any date between 2010-01-01 and 2010-12-31.  We limit our results to
+      365, since that is the maximum number of days that can be returned anyway, and because
+      if we leave this blank the service defaults to only 25 results.  Finally, note that we
+      decode the json output from the ncdc into a php associate array, you'll see why next.
+    </p>
+    <h2>4) Format the NCDC Data for the Dimple Chart</h2>
+    <p>
+      Dimple takes json data in a very specific format - no nested objects, only a flat
+      table with consistent rows and simple types for every key.  Something like this:
+    </p>
+    <pre></code>
+      var myData =  [
+        { "Brand":"Coolio", "Region":"Hipsville", "Sales Volume":1000 },
+        { "Brand":"Uncoolio", "Region":"Hipsville", "Sales Volume":500 },
+        { "Brand":"Coolio", "Region":"Dullsville", "Sales Volume":100 },
+        { "Brand":"Uncoolio", "Region":"Dullsville", "Sales Volume":2000 }
+        { "Brand":"Coolio", "Region":"Nowhere", "Sales Volume":1500 },
+        { "Brand":"Uncoolio", "Region":"Nowhere", "Sales Volume":200 }
+      ];
+    </code></pre>
+    <p>
+      So that means we need to get our weather data from the ncdc into this format.
+      To make matters a bit more complicated, the ncdc datasets aren't always complete.
+      Often, temperature or rain data might be missing for a given station.
+      So we will enclose our array building code in some if statements, to only add
+      data if it exists.  This code will generate a nice associative array and then
+      convert it just the way Dimple likes.  
+    </p>
+    <pre><code>
+      for ($i = 0; $i < 365; $i++) {
+        if (!empty($maxTemp)) {
+          $weatherArray[] = array('Date'=>$maxTemp['results'][$i]['date'],
+             'DataType'=>'MaxTemp', 'Value'=>$maxTemp['results'][$i]['value'] / 10);
+        }
+        if (!empty($minTemp)) {
+          $weatherArray[] = array('Date'=>$minTemp['results'][$i]['date'],
+            'DataType'=>'MinTemp', 'Value'=>$minTemp['results'][$i]['value'] / 10);
+        }
+        if (!empty($chanceRain)) {
+          $weatherArray[] = array('Date'=>$chanceRain['results'][$i]['date'],
+            'DataType'=>'ChanceRain', 'Value'=>$chanceRain['results'][$i]['value'] / 10);
+        }
+      }
+      
+      //create simple JSON array with weather data    
+      $weatherJson = json_encode($weatherArray);
+    </code></pre>
+    <p>The final output will be something like this:</p>
+    <pre><code>
+      $ weatherJson = [
+        {"Date":"2010-01-01", "Datatype":"MaxTemp","Value":36.5},
+        {"Date":"2010-01-01", "Datatype":"MinTemp","Value":18.2},
+        {"Date":"2010-01-01", "Datatype":"ChanceRain","Value":19.3},
+        {"Date":"2010-01-02", "Datatype":"MaxTemp","Value":36.7},
+        {"Date":"2010-01-02", "Datatype":"MinTemp","Value":18.1},
+        {"Date":"2010-01-02", "Datatype":"ChanceRain","Value":20.1},
+        {...}
+      ];
+    </code></pre>
+    <h2>5)  Render the Dimple Chart</h2>
+    <p>
+      Finally, we are ready to make our chart!  As I promised, this part is almost
+      ridiculously simple.  First, we need to include the dimple.js and d3.js libraries
+      in our document.  In your html head, add two script tags with the folow src URLs:
+    </p>
+    <pre><code>
+      src="http://d3js.org/d3.v3.min.js"
+      src="http://dimplejs.org/dist/dimple.v2.1.0.min.js"
+    </code></pre>
     
   </body>
 </html>
