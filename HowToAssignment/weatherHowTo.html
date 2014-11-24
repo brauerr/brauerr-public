@@ -360,6 +360,32 @@
       src="http://d3js.org/d3.v3.min.js"
       src="http://dimplejs.org/dist/dimple.v2.1.0.min.js"
     </code></pre>
-    
+    <p>
+      Next lets create a div element in our php file and give it a specific id, like
+      "weatherChart".  Maybe add a paragraph or header element to give the user some
+      feedback on the station name, state, and its distance from their original zipcode.
+      Then just a little bit of javascript:
+    </p>
+    <img src="images/dimple javascript.jpg" style="width: 800px">
+    <p>
+      Notice that we can echo php and assign it to javascript variables much the same way
+      we can echo it directly to the page.  This way we can get all our neat php variables
+      from earlier, including the station name, state, and distance from the zipcode, along
+      with our nicely formatted data from the NCDC.  Then we create a dimple chart, setting
+      it to render in the div that we made.  We add a time axis and assign the Date field
+      from our json data to it.  We add a measure axis and assign the Value field from our
+      json data to it.  Then, since we want one line for each of our different types of weather
+      data, we add a series, set it to the DataType field, and tell it to plot as a line for
+      the values of each unique weather type name in the DataType field.  Finally, we add a
+      simple legend and draw the chart.  The final product should look something like this:
+    </p>
+    <img src="images/final result.jpg" style="width: 800px">
+    <p>Again, links to the example web page and source materials can be found here.  Thanks!</p>
+        <a href="http://web.engr.oregonstate.edu/~brauerr/HowToAssignment/weather.php">
+      http://web.engr.oregonstate.edu/~brauerr/HowToAssignment/weather.php
+    </a><br><br>
+    <a href="https://github.com/OSU-CS494-F14/brauerr-Student/tree/master/HowToAssignment">
+      https://github.com/OSU-CS494-F14/brauerr-Student/tree/master/HowToAssignment
+    </a><br><br>
   </body>
 </html>
