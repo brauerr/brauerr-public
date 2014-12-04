@@ -1,0 +1,11 @@
+html, body, #map-canvas {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#current-user {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+}
