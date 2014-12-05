@@ -56,7 +56,12 @@
       echo "Binding parameters failed: (" . $myConnection->errno . ") " . $myConnection->error;
     }
     if(!$stmt->execute()) {
-      echo "Execute failed: (" . $myConnection->errno . ") " . $myConnection->error;
+      //check for duplicate records
+      if ($myConnection->errno == 1062) {
+        echo 'duplicate';
+      } else {
+        echo "Execute failed: (" . $myConnection->errno . ") " . $myConnection->error;
+      }
     }
     $stmt->close();
     echo 1;

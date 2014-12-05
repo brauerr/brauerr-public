@@ -102,8 +102,10 @@ session_start();
             newName : name}, function(result) {
           if (result == 1) {
             $('#createuserMessage').html('New account succesfully created, please login');
+          } else if (result == 'duplicate1') {
+            $('#createuserMessage').html('Sorry, someone already has that username');
           } else {
-            $('#createuserMessage').html('Create user failed, try another username');
+            $('#createuserMessage').html('Create user failed');
           }
         });
       }
