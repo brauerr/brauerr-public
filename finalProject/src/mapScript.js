@@ -24,44 +24,62 @@ function createMap() {
   var map_id;
   
   //first check input for data quality!!
-  //
-  //
-  //
-  //
-  //
-  
-  $('#drawmap-message').html('Creating new map...');
-  $.post("drawMap.php", {originLat : originLat, originLong : originLong, bearing: bearing,
-      numRanges : numRanges, numColumns : numColumns, rectWidth : rectWidth, rectLength : rectLength,
-      mapType: mapType, mapName : mapName, createMap: true}, function(result) {
-        if ($.isNumeric(result)) {
-          //on result, update message, add new map to dropdown
-          $('#drawmap-message').html('Map created successfully'); 
-          map_id = result;
-          var opt = document.createElement("option");
-          opt.text = mapName;
-          opt.value = map_id;
-          var mapSelect = document.getElementById('map_select');
-          mapSelect.add(opt);
-          $('#origin-lat').val('');
-          $('#origin-long').val('');
-          $('#bearing').val('');
-          $('#num-ranges').val('');
-          $('#num-columns').val('');
-          $('#rect-width').val('');
-          $('#rect-length').val('');
-          $('#map-name').val('');
-          //from http://stackoverflow.com/questions/4324141/select-select-item-by-value
-          var myOptions = mapSelect.options;
-          for (var i = 0; i < myOptions.length; i++) {
-            if (myOptions[i].value == map_id) {
-              mapSelect.selectedIndex = i;
+  if (!$.isNumeric(originLat) || originLat < -90 || originLat > 90) {
+    $('#drawmap-message').html('Please ensure Latitude is number between -90 and 90'); 
+  } else if (!$.isNumeric(originLong) || originLong < -180 || originLong > 180) {
+    $('#drawmap-message').html('Please ensure Longitude is number between -180 and 180'); 
+  } else if (!$.isNumeric(bearing) || bearing < 0 || bearing > 360) {
+    $('#drawmap-message').html('Please ensure bearing is number between 0 and 360'); 
+  } else if (mapName.length < 1) {
+    $('#drawmap-message').html('Please enter a map name'); 
+  } else if (numRanges % 1 !== 0 || numRanges < 1) {
+    $('#drawmap-message').html('Please ensure #ranges is a positive integer');
+  } else if (numRanges > 100) {
+    $('#drawmap-message').html('Max number of ranges is 100');
+  } else if (numColumns > 100) {
+    $('#drawmap-message').html('Max number of columns is 100');
+  } else if (numColumns % 1 !== 0 || numColumns < 1) {
+    $('#drawmap-message').html('Please ensure #columns is a positive integer');
+  } else if (!$.isNumeric(rectLength) || rectLength <= 0 || rectLength > 100) {
+    $('#drawmap-message').html('Please ensure length is number between 0 and 100');
+  } else if (!$.isNumeric(rectWidth) || rectWidth <= 0 || rectWidth > 100) {
+    $('#drawmap-message').html('Please ensure width is number between 0 and 100');
+  } else {
+    $('#drawmap-message').html('Creating new map...');
+    $.post("drawMap.php", {originLat : originLat, originLong : originLong, bearing: bearing,
+        numRanges : numRanges, numColumns : numColumns, rectWidth : rectWidth, rectLength : rectLength,
+        mapType: mapType, mapName : mapName, createMap: true}, function(result) {
+          if ($.isNumeric(result)) {
+            //on result, update message, add new map to dropdown
+            $('#drawmap-message').html('Map created successfully'); 
+            map_id = result;
+            var opt = document.createElement("option");
+            opt.text = mapName;
+            opt.value = map_id;
+            var mapSelect = document.getElementById('map_select');
+            mapSelect.add(opt);
+            $('#origin-lat').val('');
+            $('#origin-long').val('');
+            $('#bearing').val('');
+            $('#num-ranges').val('');
+            $('#num-columns').val('');
+            $('#rect-width').val('');
+            $('#rect-length').val('');
+            $('#map-name').val('');
+            //from http://stackoverflow.com/questions/4324141/select-select-item-by-value
+            var myOptions = mapSelect.options;
+            for (var i = 0; i < myOptions.length; i++) {
+              if (myOptions[i].value == map_id) {
+                mapSelect.selectedIndex = i;
+              }
             }
+            map_id = mapSelect.options[mapSelect.selectedIndex].value;
+            loadMap(map_id);
+          } else {
+            $('#drawmap-message').html('Map creation failed');
           }
-        } else {
-          $('#drawmap-message').html('Map creation failed');
-        }
-      });
+        });
+  }
 }
       
 function deleteMap() {
