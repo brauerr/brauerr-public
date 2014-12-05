@@ -3,6 +3,7 @@
   include 'storedInfo.php'; //for storing password and other secure data
   session_start();
   
+  //handle post from createmap() js function
   if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['createMap'])) {
     $originLat = $_POST['originLat'];
     $originLong = $_POST['originLong'];
@@ -31,6 +32,7 @@
     if(!$stmt->execute()) {
       echo "Execute failed: (" . $myConnection->errno . ") " . $myConnection->error;
     }
+    $map_id = $myConnection->insert_id;
     $stmt->close();
     
     //count one over for every column
@@ -53,8 +55,6 @@
       }
     }
     
-    //var_dump($coordArray);
-    
     //translate array of coordinates to array of rectangles for database
     $rectArray = array();
     for ($numRect = 0; $numRect < $numRanges * $numColumns; $numRect++) {
@@ -62,17 +62,15 @@
       $range = (int)($numRect / $numColumns) + 1;
       $lat1 = $coordArray[$column - 1 + ($range - 1) * ($numColumns + 1)][0]; 
       $lat2 = $coordArray[$column + ($range - 1) * ($numColumns + 1)][0];
-      $lat3 = $coordArray[$column - 1 + $range * ($numColumns + 1)][0];
-      $lat4 = $coordArray[$column + $range * ($numColumns + 1)][0];
+      $lat4 = $coordArray[$column - 1 + $range * ($numColumns + 1)][0];
+      $lat3 = $coordArray[$column + $range * ($numColumns + 1)][0];
       $long1 = $coordArray[$column - 1 + ($range - 1) * ($numColumns + 1)][1]; 
       $long2 = $coordArray[$column + ($range - 1) * ($numColumns + 1)][1];
-      $long3 = $coordArray[$column - 1 + $range * ($numColumns + 1)][1];
-      $long4 = $coordArray[$column + $range * ($numColumns + 1)][1];
+      $long4 = $coordArray[$column - 1 + $range * ($numColumns + 1)][1];
+      $long3 = $coordArray[$column + $range * ($numColumns + 1)][1];
       $rectArray[] = ["range" => $range, "column" => $column, "lat1" => $lat1, "lat2" => $lat2, "lat3" => $lat3,
           "lat4" => $lat4, "long1" => $long1, "long2" => $long2, "long3" => $long3, "long4" => $long4];
     }
-    
-    //var_dump($rectArray);
     
     //create array in database - one record for each element in rectarray
     for ($i = 0; $i < sizeof($rectArray); $i++) {
@@ -91,7 +89,83 @@
       $stmt->close();
     }
    
-    echo "1";
+    echo $map_id;
+    $myConnection->close();
+  }
+  
+  //handle post from loadMap() js function
+  if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['loadMap'])) {
+    $map_id = (int)$_POST['map_id'];
+    
+    //connect to database
+    $myConnection = new mysqli("oniddb.cws.oregonstate.edu", "brauerr-db", $myPassword, "brauerr-db");
+    if ($myConnection->connect_errno) {
+      echo "Failed to connect to MySQL: (" . $myConnection->connect_errno . ") " . $myConnection->connect_error;
+    } 
+    
+    //return data and add to associative array
+    $outputArray = array();
+    if (!($stmt = $myConnection->prepare("SELECT map_range, map_column, lat_1, long_1, lat_2, long_2, lat_3, long_3,
+        lat_4, long_4 FROM map_rectangles WHERE map_id = ?"))) {
+      echo "Prepare failed: (" . $myConnection->errno . ") " . $myConnection->error;
+    }
+    if(!$stmt->bind_param("i", $map_id)) {
+      echo "Binding parameters failed: (" . $myConnection->errno . ") " . $myConnection->error;
+    }
+    if (!$stmt->execute()) {
+    echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+    }
+    if (!$stmt->bind_result($range, $column, $lat1, $long1, $lat2, $long2, $lat3, $long3, $lat4, $long4)) {
+      echo "Binding results failed: (" . $stmt->errno . ") " . $stmt->error;
+    }
+    while ($stmt->fetch()) {
+      $outputArray[] = ["range" => $range, "column" => $column, "lat1" => $lat1, "long1" => $long1, "lat2" => $lat2,
+          "long2" => $long2, "lat3" => $lat3, "long3" => $long3, "lat4" => $lat4, "long4" => $long4];
+    }
+    $stmt->close();
+    
+    echo json_encode($outputArray);
+    
+    $myConnection->close();
+  }
+  
+  //handle post from deleteMap() js function
+  if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteMap'])) {
+    $deleteId = $_POST['map_id'];
+    
+    //connect to database
+    $myConnection = new mysqli("oniddb.cws.oregonstate.edu", "brauerr-db", $myPassword, "brauerr-db");
+    if ($myConnection->connect_errno) {
+      echo "Failed to connect to MySQL: (" . $myConnection->connect_errno . ") " . $myConnection->connect_error;
+    } 
+    
+    //delete rectangles from map (map_rectangles table)
+    if (!($stmt = $myConnection->prepare("DELETE FROM map_rectangles WHERE map_id = ?"))) {
+      echo "Prepare failed: (" . $myConnection->errno . ") " . $myConnection->error;
+    }
+    if (!$stmt->bind_param("i", $deleteId)) {
+      echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+    }
+    if (!$stmt->execute()) {
+      echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+    }
+    $stmt->close();
+    
+    //delete map from maps table
+    if (!($stmt = $myConnection->prepare("DELETE FROM maps WHERE map_id = ?"))) {
+      echo "Prepare failed: (" . $myConnection->errno . ") " . $myConnection->error;
+    }
+    if (!$stmt->bind_param("i", $deleteId)) {
+      echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+    }
+    if (!$stmt->execute()) {
+      echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+    }
+    $stmt->close();
+    
+    $myConnection->close();
+    
+    echo $deleteId;
   }
   
   //function to convert measurement in degrees to radians

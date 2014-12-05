@@ -48,14 +48,13 @@ if (($_SERVER['REQUEST_METHOD'] == 'GET') && isset($_GET['logout'])) {
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="map.php">Map View</a></li>
-            <li><a href="table.php">Table View</a></li>
             <li class="dropdown">
               <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                 My Account <span class="caret"></span>
               </a>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="login.php?logout=true">Logout</a></li>
-                <li><a href="createAccount.php">Modify Settings</a></li>
+                <li><a href="login.php?logout=true">Logout/Login</a></li>
+                <li><a href="createAccount.php">Create New Account</a></li>
               </ul>
             </li>
           </ul>
@@ -64,7 +63,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'GET') && isset($_GET['logout'])) {
     </nav>
     
     <div class="container">
-      
+    <!--example code borrowed from bootstrap main site-->  
       <form class="form-signin" role="form">
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputUsername" class="sr-only">Username</label>
@@ -72,7 +71,8 @@ if (($_SERVER['REQUEST_METHOD'] == 'GET') && isset($_GET['logout'])) {
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
         <button class="btn btn-lg btn-primary btn-block" type="button" id="Login" hidefocus="true">Log In</button>
-        <span id="loginMessage"></span>
+        <span id="loginMessage"></span><br>
+        <a href="createAccount.php">Create a New Account</a>
       </form>
     </div>
     

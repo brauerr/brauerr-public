@@ -12,6 +12,7 @@
     echo "Failed to connect to MySQL: (" . $myConnection->connect_errno . ") " . $myConnection->connect_error;
   } 
   
+  //code to handle user check login request
   if(isset($_POST['inputUsername'])) {
     //ensure this is an ajax request
     if(!isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) != 'xmlhttprequest') {
@@ -40,4 +41,26 @@
     echo $rowCount; //should be 1
     $myConnection->close();
   }
+  
+  //code to handle create user request
+  if(isset($_POST['newUsername'])) {
+    $username = $_POST['newUsername'];
+    $email = $_POST['newEmail'];
+    $name = $_POST['newName'];
+    $password = $_POST['newPassword'];
+    
+    if(!($stmt = $myConnection->prepare("INSERT INTO map_users(username, email, name, password) VALUES (?,?,?,?)"))) {
+      echo "Prepare failed: (" . $myConnection->errno . ") " . $myConnection->error;
+    }
+    if(!$stmt->bind_param("ssss", $username, $email, $name, $password)) {
+      echo "Binding parameters failed: (" . $myConnection->errno . ") " . $myConnection->error;
+    }
+    if(!$stmt->execute()) {
+      echo "Execute failed: (" . $myConnection->errno . ") " . $myConnection->error;
+    }
+    $stmt->close();
+    echo 1;
+  }
+  
+  
 ?>

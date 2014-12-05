@@ -9,3 +9,7 @@ html, body, #map-canvas {
   display: block;
   padding: 10px 15px;
 }
+
+$state-select {
+  size: 4
+}
